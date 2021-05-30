@@ -1,15 +1,24 @@
 import React from 'react';
 import { Container, Typography, Button, Grid } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import CartItem from './CartItem/CartItem';
 import useStyles from './styles';
 
-const Cart = ({ cart }) => {
+const Cart = ({
+	cart,
+	handleUpdateCartQty,
+	handleRemoveFromCart,
+	handleEmptyCart,
+}) => {
 	const classes = useStyles();
 
 	const EmptyCart = () => {
 		return (
 			<Typography variant="subtitle1">
-				You have no item in cart. Start addind some!
+				You have no item in cart.
+				<Link to="/" className={classes.link}>
+					Start addind some!
+				</Link>
 			</Typography>
 		);
 	};
@@ -19,7 +28,11 @@ const Cart = ({ cart }) => {
 			<Grid container spacing={2}>
 				{cart.line_items.map(item => (
 					<Grid item xs={12} sm={3} key={item.id}>
-						<CartItem item={item}/>
+						<CartItem
+							item={item}
+							handleUpdateCartQty={handleUpdateCartQty}
+							onRemoveFromCart={handleRemoveFromCart}
+						/>
 					</Grid>
 				))}
 			</Grid>
@@ -34,10 +47,13 @@ const Cart = ({ cart }) => {
 						size="large"
 						variant="contained"
 						color="secondary"
+						onClick={handleEmptyCart}
 					>
 						Empty Cart
 					</Button>
 					<Button
+						component={Link}
+						to="/checkout"
 						className={classes.checkoutButton}
 						type="button"
 						size="large"
@@ -49,9 +65,9 @@ const Cart = ({ cart }) => {
 				</div>
 			</div>
 		</div>
-  );
-  
-  if(!cart.line_items) return "Loading..."
+	);
+
+	if (!cart.line_items) return 'Loading...';
 
 	return (
 		<Container>
