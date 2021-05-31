@@ -22,16 +22,25 @@ const AddressForm = ({ checkoutToken, next }) => {
 	const [shippingOption, setShippingOption] = useState('');
 	const methods = useForm();
 
+	// Turnig subdivision object into arrays
+	const subdivisions = Object.entries(
+		shippingSubdivisions
+	).map(([code, name]) => ({ id: code, label: name }));
+
 	const fetchShippingCountries = async checkoutTokenId => {
-		const { countries } = await commerce.services.localeListShippingCountries(checkoutTokenId);
-    console.log(countries);
+		const { countries } = await commerce.services.localeListShippingCountries(
+			checkoutTokenId
+		);
+		console.log(countries);
 		setShippingCountries(countries);
 		setShippingCountry(Object.keys(countries)[0]);
-  };
-	
+	};
+
 	// fetching sub-divisons or regions based on country
-  const fetchSubdivisions = async countryCode => {
-		const { subdivisions } = await commerce.services.localeListSubdivisions(countryCode);
+	const fetchSubdivisions = async countryCode => {
+		const { subdivisions } = await commerce.services.localeListSubdivisions(
+			countryCode
+		);
 		setShippingSubdivisions(subdivisions);
 		setShippingSubdivision(Object.keys(subdivisions)[0]);
 	};
@@ -52,10 +61,12 @@ const AddressForm = ({ checkoutToken, next }) => {
 
 	useEffect(() => {
 		fetchShippingCountries(checkoutToken.id);
-  }, []);
-  
-  useEffect(() => {
-		if (shippingCountry) fetchSubdivisions(shippingCountry);
+	}, []);
+
+	useEffect(() => {
+		if (shippingCountry) {
+			fetchSubdivisions(shippingCountry);
+		}
 	}, [shippingCountry]);
 
 	useEffect(() => {
@@ -113,13 +124,11 @@ const AddressForm = ({ checkoutToken, next }) => {
 								fullWidth
 								onChange={e => setShippingSubdivision(e.target.value)}
 							>
-								{Object.entries(shippingSubdivisions)
-									.map(([code, name]) => ({ id: code, label: name }))
-									.map(item => (
-										<MenuItem key={item.id} value={item.id}>
-											{item.label}
-										</MenuItem>
-									))}
+								{subdivisions.map(subdivision => (
+									<MenuItem key={subdivision.id} value={subdivision.id}>
+										{subdivision.label}
+									</MenuItem>
+								))}
 							</Select>
 						</Grid>
 						<Grid item xs={12} sm={6}>
